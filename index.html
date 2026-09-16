@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4f4f6">
+<title>Pose Teachable Lab</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">P</div>
+    <div><strong>POSE TEACHABLE LAB</strong><small>Collect → Train → Test, directly in the browser</small></div>
+  </div>
+  <div class="head-actions">
+    <button class="hbtn desktop" id="ideasBtn">Gợi ý tư thế</button>
+    <button class="hbtn desktop" id="downloadDataBtn">Tải dữ liệu</button>
+    <button class="hbtn dark" id="newProjectBtn">Dự án mới</button>
+  </div>
+</header>
+
+<main>
+  <section class="workspace">
+    <div class="col">
+      <h2 class="section-title">1. Input</h2>
+      <div class="card">
+        <div class="camera" id="camera">
+          <video id="video" playsinline muted></video>
+          <canvas id="poseCanvas"></canvas>
+          <div class="placeholder" id="placeholder">
+            <div class="cam-icon"></div>
+            <b>Webcam</b>
+            <span>Bật camera. Hệ thống chỉ lấy các điểm cơ thể để tạo dữ liệu tư thế.</span>
+          </div>
+        </div>
+        <div class="camera-tools">
+          <button id="cameraBtn">Start camera</button>
+          <button id="skeletonBtn" disabled>Hide skeleton</button>
+        </div>
+        <div class="status">
+          <div>Pose detector<b id="detectorStatus">Not loaded</b></div>
+          <div>Current pose<b id="poseStatus">Not detected</b></div>
+        </div>
+      </div>
+      <div class="tipbox">
+        <b>Đây chưa phải model phân loại của HS.</b> MoveNet chỉ xác định 17 điểm cơ thể. Model phân loại bên cạnh sẽ được tạo mới từ dữ liệu HS thu và chỉ được huấn luyện khi HS bấm <b>TRAIN MODEL</b>.
+      </div>
+    </div>
+
+    <div class="col">
+      <h2 class="section-title">2. Learning</h2>
+      <div class="learning-stack" id="learningStack"></div>
+      <button class="add-class" id="addClassBtn">+ Add a class</button>
+      <div class="train-panel">
+        <button class="train-btn" id="trainBtn" disabled>Train Model</button>
+        <div class="train-progress" id="trainProgress">
+          <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="train-text"><span id="epochText">Epoch 0/0</span><span id="lossText">Loss —</span></div>
+        </div>
+      </div>
+      <div class="learning-note" id="learningNote">Thu dữ liệu cho ít nhất 2 lớp; khuyến nghị 30–60 mẫu/lớp.</div>
+    </div>
+
+    <div class="col">
+      <h2 class="section-title">3. Preview</h2>
+      <div class="output-card">
+        <div class="output-stage">
+          <div class="result-disc" id="resultDisc"></div>
+          <div class="result-name" id="resultName">Chưa huấn luyện</div>
+          <div class="result-confidence" id="resultConfidence">Confidence 0%</div>
+        </div>
+        <div class="predictions" id="predictions"></div>
+        <div class="output-actions">
+          <button id="pauseBtn">Pause prediction</button>
+          <button id="exportModelBtn" disabled>Export model</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="bottom-bar">
+    <span><b>WORKFLOW:</b> Tạo class → thu nhiều ví dụ → Train Model → kiểm thử bằng dữ liệu mới → bổ sung dữ liệu nếu model nhầm → Train lại.</span>
+    <button id="ideasBtn2">Pose data ideas</button>
+  </div>
+</main>
+
+<dialog id="ideasDialog">
+  <div class="modal-head"><h2>Gợi ý bộ tư thế</h2><button class="close" data-close="ideasDialog">×</button></div>
+  <div class="modal-body">
+    <p>Chọn một bộ chỉ để <b>điền tên class</b>. Không có dữ liệu mẫu nào được nạp sẵn; HS vẫn phải tự thu toàn bộ dữ liệu.</p>
+    <div class="presets" id="presetList"></div>
+    <div class="guide">
+      <b>Gợi ý thu dữ liệu:</b> mỗi class 30–60 mẫu; có gần–vừa–xa; hơi lệch trái/phải; nếu muốn model học tư thế thay vì học đặc điểm một người, hãy thu từ ít nhất 2 người. Giữ tập kiểm thử riêng, không thu tất cả dữ liệu ở cùng một vị trí.
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
